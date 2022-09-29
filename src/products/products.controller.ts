@@ -10,6 +10,8 @@ import { UpdateProductDTO } from './dto/update-product.dto';
 @Controller('products')
 export class ProductsController {
   constructor(private productRepository: ProductsDataService) {}
+
+  @Get(':id')
   getProductById(@Param('id') _id_: string): ExternalProductDTO {
     return this.mapProductToExternal(
       this.productRepository.getProductById(_id_),
