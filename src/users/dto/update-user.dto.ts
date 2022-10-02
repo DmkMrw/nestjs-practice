@@ -1,15 +1,15 @@
 import { Roles } from '../roles.enum';
 
-export interface CreateUserDTO {
+export interface UpdateUserDTO {
   firstName: string;
   lastName: string;
   email: string;
   dateOfBirth: Array<number>;
-  address: Array<UserAddress>;
+  address: Array<UpdateUserAddress>;
   role: Array<Roles>;
 }
 
-export interface UserAddress {
+export interface UpdateUserAddress {
   country: string;
   city: string;
   street: string;
