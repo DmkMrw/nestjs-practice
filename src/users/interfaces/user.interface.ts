@@ -1,10 +1,11 @@
 import { Roles } from '../enums/roles.enum';
 
-export interface CreateUserDTO {
+export interface User {
+  id: string;
   firstName: string;
   lastName: string;
   email: string;
-  dateOfBirth: Array<number>;
+  dateOfBirth: Date;
   address: Array<UserAddress>;
   role: Array<Roles>;
 }
