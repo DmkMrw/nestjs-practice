@@ -44,4 +44,8 @@ export class UsersDataService {
   getAllUsers(): Array<User> {
     return this.users;
   }
+
+  getUserByEmail(email: string): User {
+    return this.users.find((user) => user.email === email);
+  }
 }
