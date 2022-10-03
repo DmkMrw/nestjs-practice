@@ -5,7 +5,6 @@ import { ExternalUserDTO } from './dto/external-user.dto';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import { User } from './interfaces/user.interface';
-import { dateToArray } from 'src/shared/helpers/date.helper';
 import { ParseUUIDPipe } from '@nestjs/common/pipes';
 
 @Controller('users')
