@@ -6,13 +6,16 @@ import { ProductsDataService } from './products-data.service';
 import { dateToArray } from 'src/shared/helpers/date.helper';
 import { Product } from './interfaces/product.interface';
 import { UpdateProductDTO } from './dto/update-product.dto';
+import { ParseUUIDPipe } from '@nestjs/common/pipes';
 
 @Controller('products')
 export class ProductsController {
   constructor(private productRepository: ProductsDataService) {}
 
   @Get(':id')
-  getProductById(@Param('id') _id_: string): ExternalProductDTO {
+  getProductById(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) _id_: string,
+  ): ExternalProductDTO {
     return this.mapProductToExternal(
       this.productRepository.getProductById(_id_),
     );
@@ -30,7 +33,7 @@ export class ProductsController {
 
   @Put(':id')
   updateProduct(
-    @Param('id') id: string,
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
     @Body() dto: UpdateProductDTO,
   ): ExternalProductDTO {
     return this.mapProductToExternal(
