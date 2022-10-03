@@ -4,15 +4,15 @@ export interface UpdateUserDTO {
   firstName: string;
   lastName: string;
   email: string;
-  dateOfBirth: Array<number>;
+  dateOfBirth: Date;
   address: Array<UpdateUserAddress>;
   role: Array<Roles>;
 }
 
-export interface UpdateUserAddress {
+export class UpdateUserAddress {
   country: string;
   city: string;
   street: string;
-  houseNo: string;
-  apartmentNo?: string;
+  apartment: number;
+  house: number;
 }

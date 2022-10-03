@@ -3,7 +3,6 @@ import { User } from '../users/interfaces/user.interface';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { ExternalUserDTO } from './dto/external-user.dto';
 import { UpdateUserDTO } from './dto/update-user.dto';
-import { dateToArray } from 'src/shared/helpers/date.helper';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
@@ -19,7 +18,7 @@ export class UsersDataService {
     this.users.push(user);
     return {
       ...user,
-      dateOfBirth: dateToArray(user.dateOfBirth),
+      dateOfBirth: user.dateOfBirth,
     };
   }
 
