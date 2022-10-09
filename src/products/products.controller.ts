@@ -13,13 +13,14 @@ import {
 } from '@nestjs/common';
 import { ProductsDataService } from './products-data.service';
 import { dateToArray } from 'src/shared/helpers/date.helper';
-import { Product } from './interfaces/product.interface';
 import { UpdateProductDTO } from './dto/update-product.dto';
 import { ParseUUIDPipe } from '@nestjs/common/pipes';
 import { RoleGuard } from 'src/shared/guards/role.guard';
+import { Product } from './db/products.entity';
 
 @Controller('products')
 export class ProductsController {
+  productService: any;
   constructor(private productRepository: ProductsDataService) {}
 
   @Get(':id')
@@ -31,32 +32,36 @@ export class ProductsController {
     );
   }
 
-  @Get() getAllProducts(): Array<ExternalProductDTO> {
-    return this.productRepository
-      .getAllProducts()
-      .map(this.mapProductToExternal);
+  @Get() async getAllProducts(): Promise<Array<ExternalProductDTO>> {
+    return (await this.productRepository.getAllProducts()).map(
+      this.mapProductToExternal,
+    );
   }
 
-  @Post()
   @UseGuards(RoleGuard)
-  addProduct(@Body() _item_: CreateProductDTO): ExternalProductDTO {
-    return this.productRepository.addProduct(_item_);
+  @Post()
+  async addProduct(
+    @Body() item: CreateProductDTO,
+  ): Promise<ExternalProductDTO> {
+    return this.mapProductToExternal(
+      await this.productService.addProduct(item),
+    );
   }
 
   @Put(':id')
-  updateProduct(
+  async updateProduct(
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
     @Body() dto: UpdateProductDTO,
-  ): ExternalProductDTO {
+  ): Promise<ExternalProductDTO> {
     return this.mapProductToExternal(
-      this.productRepository.updateProduct(id, dto),
+      await this.productRepository.updateProduct(id, dto),
     );
   }
 
   @Delete(':id')
   @HttpCode(204)
-  deleteProduct(@Param('id') _id_: string): void {
-    return this.productRepository.deleteProduct(_id_);
+  async deleteProduct(@Param('id') id: string): Promise<void> {
+    return await this.productRepository.deleteProduct(id);
   }
 
   mapProductToExternal(product: Product): ExternalProductDTO {
@@ -64,6 +69,7 @@ export class ProductsController {
       ...product,
       createdAt: dateToArray(product.createdAt),
       updatedAt: dateToArray(product.updatedAt),
+      tags: product.tags?.map((i) => i.name),
     };
   }
 }

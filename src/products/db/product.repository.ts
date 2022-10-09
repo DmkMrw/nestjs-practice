@@ -1,4 +1,4 @@
-import { Repository, In } from 'typeorm';
+import { Repository, In, DeleteResult } from 'typeorm';
 import { Product } from './products.entity';
 import { Injectable } from '@nestjs/common';
 
@@ -10,5 +10,8 @@ export class ProductRepository extends Repository<Product> {
         name: In(names),
       },
     });
+  }
+  deleteById(id: string): Promise<DeleteResult> {
+    return this.delete({ id });
   }
 }
