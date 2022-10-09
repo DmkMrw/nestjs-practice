@@ -41,8 +41,8 @@ export class UsersController {
 
   @Delete(':id')
   @HttpCode(204)
-  deleteUser(@Param('id') _id_: string): void {
-    return this.userRepository.deleteUser(_id_);
+  async deleteUser(@Param('id') user: string): Promise<void> {
+    return this.userRepository.deleteUser(user);
   }
 
   mapUserToExternal(user: User): ExternalUserDTO {

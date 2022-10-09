@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { UserRepository } from './db/user.repository';
 import { UserAddressRepository } from './db/user-address.respository';
-import { RoleRepository } from './db/role.repository';
 import { UserRequireUniqueEmailException } from './exception/user-require-unique-email-exception';
-import { Role } from './db/role.entity';
 import { User } from './db/users.entity';
 import { UserAddress } from './db/users-addresses.entity';
 import { CreateUserAddressDTO, CreateUserDTO } from './dto/create-user.dto';
@@ -14,34 +12,29 @@ export class UsersDataService {
   constructor(
     private userRepository: UserRepository,
     private userAddressRepository: UserAddressRepository,
-    private roleRepository: RoleRepository,
   ) {}
   private users: Array<User> = [];
 
   async addUser(_user_: CreateUserDTO): Promise<User> {
-    const checkEmail = this.userRepository.getUserByEmail(_user_.email);
-    if (checkEmail) {
+    const checkEmail = await this.userRepository.getUserByEmail(_user_.email);
+    if (checkEmail.length) {
       throw new UserRequireUniqueEmailException();
     }
-    const roles: Role[] = await this.roleRepository.findRolesByName(
-      _user_.role,
-    );
     const userToSave = new User();
     userToSave.firstName = _user_.firstName;
     userToSave.lastName = _user_.lastName;
     userToSave.email = _user_.email;
     userToSave.dateOfBirth = _user_.dateOfBirth;
     userToSave.address = await this.prepareUserAddressesToSave(_user_.address);
-    userToSave.role = roles;
+    userToSave.role = _user_.role;
     return this.userRepository.save(userToSave);
   }
 
-  deleteUser(id: string): void {
-    this.users = this.users.filter((i) => i.id !== id);
+  async deleteUser(id: string): Promise<void> {
+    this.userRepository.delete(id);
   }
 
   async updateUser(id: string, dto: UpdateUserDTO): Promise<User> {
-    const roles: Role[] = await this.roleRepository.findRolesByName(dto.role);
     const userToUpdate = await this.getUserById(id);
 
     userToUpdate.firstName = dto.firstName;
@@ -49,7 +42,7 @@ export class UsersDataService {
     userToUpdate.email = dto.email;
     userToUpdate.dateOfBirth = dto.dateOfBirth;
     userToUpdate.address = await this.prepareUserAddressesToSave(dto.address);
-    userToUpdate.role = roles;
+    userToUpdate.role = dto.role;
 
     await this.userAddressRepository.deleteUserAddressesByUserId(id);
     await this.userRepository.save(userToUpdate);
@@ -57,8 +50,8 @@ export class UsersDataService {
     return this.getUserById(id);
   }
 
-  getUserById(id: string): User {
-    return this.users.find((user) => user.id === id);
+  getUserById(id: string): Promise<User> {
+    return this.userRepository.findOne({ id });
   }
 
   getAllUsers(): Promise<User[]> {

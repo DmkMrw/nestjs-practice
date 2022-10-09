@@ -14,6 +14,6 @@ export class ExternalUserAddress {
   country: string;
   city: string;
   street: string;
-  apartment: number;
+  number: number;
   house: number;
 }

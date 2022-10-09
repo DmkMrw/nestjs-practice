@@ -22,8 +22,9 @@ export class CreateUserDTO {
 
   dateOfBirth: Date;
 
-  @OneToMany((type) => UserAddress, (address) => address.user)
-  address: UserAddress[];
+  @ValidateNested({ each: true })
+  @Type(() => CreateUserAddressDTO)
+  address?: Array<UserAddress>;
 
   @IsEnum(Roles)
   role: Roles[];
@@ -38,7 +39,7 @@ export class CreateUserAddressDTO {
   street: string;
   @IsNotEmpty()
   @IsNumber()
-  house: number;
+  number: number;
   @IsNotEmpty()
   @IsNumber()
   apartment: number;
