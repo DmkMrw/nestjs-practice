@@ -7,6 +7,8 @@ import {
   IsNumber,
   IsEnum,
 } from 'class-validator';
+import { UserAddress } from '../db/users-addresses.entity';
+import { OneToMany } from 'typeorm';
 
 export class CreateUserDTO {
   @IsNotEmpty()
@@ -20,9 +22,8 @@ export class CreateUserDTO {
 
   dateOfBirth: Date;
 
-  @ValidateNested({ each: true })
-  @Type(() => CreateUserAddressDTO)
-  address?: Array<CreateUserAddressDTO>;
+  @OneToMany((type) => UserAddress, (address) => address.user)
+  address: UserAddress[];
 
   @IsEnum(Roles)
   role: Roles[];

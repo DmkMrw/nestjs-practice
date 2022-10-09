@@ -4,35 +4,39 @@ import { Body, Get, Param, Post, Put, Delete, HttpCode } from '@nestjs/common';
 import { ExternalUserDTO } from './dto/external-user.dto';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { UpdateUserDTO } from './dto/update-user.dto';
-import { User } from './interfaces/user.interface';
 import { ParseUUIDPipe } from '@nestjs/common/pipes';
+import { User } from './db/users.entity';
 
 @Controller('users')
 export class UsersController {
   constructor(private userRepository: UsersDataService) {}
 
   @Get(':id')
-  getUserById(
+  async getUserById(
     @Param('id', new ParseUUIDPipe({ version: '4' })) _id_: string,
-  ): ExternalUserDTO {
-    return this.mapUserToExternal(this.userRepository.getUserById(_id_));
+  ): Promise<ExternalUserDTO> {
+    return this.mapUserToExternal(await this.userRepository.getUserById(_id_));
   }
 
-  @Get() getAllUsers(): Array<ExternalUserDTO> {
-    return this.userRepository.getAllUsers().map(this.mapUserToExternal);
+  @Get() async getAllUsers(): Promise<Array<ExternalUserDTO>> {
+    return (await this.userRepository.getAllUsers()).map(
+      this.mapUserToExternal,
+    );
   }
 
   @Post()
-  addUser(@Body() _user_: CreateUserDTO): ExternalUserDTO {
-    return this.userRepository.addUser(_user_);
+  async addUser(@Body() user: CreateUserDTO): Promise<ExternalUserDTO> {
+    return this.mapUserToExternal(await this.userRepository.addUser(user));
   }
 
   @Put(':id')
-  updateUser(
+  async updateUser(
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
     @Body() dto: UpdateUserDTO,
-  ): ExternalUserDTO {
-    return this.mapUserToExternal(this.userRepository.updateUser(id, dto));
+  ): Promise<ExternalUserDTO> {
+    return this.mapUserToExternal(
+      await this.userRepository.updateUser(id, dto),
+    );
   }
 
   @Delete(':id')
@@ -42,6 +46,6 @@ export class UsersController {
   }
 
   mapUserToExternal(user: User): ExternalUserDTO {
-    return { ...user };
+    return { ...user, role: user.role?.map((i) => i) };
   }
 }

@@ -7,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { UserAddress } from './users-addresses.entity';
+import { Role } from './role.entity';
 
 @Entity({
   name: 'users',
@@ -30,7 +31,7 @@ export class User {
   @Column('enum', {
     enum: Roles,
   })
-  role: Roles;
+  role: Roles[];
 
   @OneToMany((type) => UserAddress, (address) => address.user)
   address?: UserAddress[];
