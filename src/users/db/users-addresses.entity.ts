@@ -18,7 +18,10 @@ export class UserAddress {
   street: string;
 
   @Column({ type: 'int' })
-  number: number;
+  house: number;
+
+  @Column({ type: 'int' })
+  apartment: number;
 
   @ManyToOne((type) => User, (user) => user.id, {
     onDelete: 'CASCADE',

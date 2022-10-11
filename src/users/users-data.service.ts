@@ -51,7 +51,7 @@ export class UsersDataService {
   }
 
   getUserById(id: string): Promise<User> {
-    return this.userRepository.findOne({ id });
+    return this.userRepository.findOne(id);
   }
 
   getAllUsers(): Promise<User[]> {
@@ -72,7 +72,8 @@ export class UsersDataService {
       addressToSave.country = add.country;
       addressToSave.city = add.city;
       addressToSave.street = add.street;
-      addressToSave.number = add.number;
+      addressToSave.house = add.house;
+      addressToSave.apartment = add.apartment;
 
       addresses.push(await this.userAddressRepository.save(addressToSave));
     }

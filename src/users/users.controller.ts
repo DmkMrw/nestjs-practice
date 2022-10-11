@@ -46,6 +46,14 @@ export class UsersController {
   }
 
   mapUserToExternal(user: User): ExternalUserDTO {
-    return { ...user, role: user.role?.map((i) => i) };
+    return {
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      address: user.address,
+      dateOfBirth: user.dateOfBirth,
+      role: user.role,
+    };
   }
 }

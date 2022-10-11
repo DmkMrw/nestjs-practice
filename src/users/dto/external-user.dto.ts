@@ -1,4 +1,5 @@
 import { Roles } from '../../shared/enums/roles.enum';
+import { UserAddress } from '../db/users-addresses.entity';
 
 export class ExternalUserDTO {
   id: string;
@@ -6,7 +7,7 @@ export class ExternalUserDTO {
   lastName: string;
   email: string;
   dateOfBirth: Date;
-  address?: Array<ExternalUserAddress>;
+  address?: UserAddress[];
   role: Roles[];
 }
 

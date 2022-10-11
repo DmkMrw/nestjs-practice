@@ -24,7 +24,7 @@ export class CreateUserDTO {
 
   @ValidateNested({ each: true })
   @Type(() => CreateUserAddressDTO)
-  address?: Array<UserAddress>;
+  address?: UserAddress[];
 
   @IsEnum(Roles)
   role: Roles[];
@@ -39,7 +39,7 @@ export class CreateUserAddressDTO {
   street: string;
   @IsNotEmpty()
   @IsNumber()
-  number: number;
+  house: number;
   @IsNotEmpty()
   @IsNumber()
   apartment: number;

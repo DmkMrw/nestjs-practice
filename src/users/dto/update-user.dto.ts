@@ -7,7 +7,7 @@ export interface UpdateUserDTO {
   lastName: string;
   email: string;
   dateOfBirth: Date;
-  address: Array<UserAddress>;
+  address: UserAddress[];
   role: Array<Roles>;
 }
 
