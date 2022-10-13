@@ -17,6 +17,7 @@ import { UpdateProductDTO } from './dto/update-product.dto';
 import { ParseUUIDPipe } from '@nestjs/common/pipes';
 import { RoleGuard } from 'src/shared/guards/role.guard';
 import { Product } from './db/products.entity';
+import { Tags } from './enums/tags.enum';
 
 @Controller('products')
 export class ProductsController {
@@ -24,12 +25,11 @@ export class ProductsController {
   constructor(private productRepository: ProductsDataService) {}
 
   @Get(':id')
-  getProductById(
+  async getProductById(
     @Param('id', new ParseUUIDPipe({ version: '4' })) _id_: string,
-  ): ExternalProductDTO {
-    return this.mapProductToExternal(
-      this.productRepository.getProductById(_id_),
-    );
+  ): Promise<ExternalProductDTO> {
+    const product = await this.productRepository.getProductById(_id_);
+    return this.mapProductToExternal(product);
   }
 
   @Get() async getAllProducts(): Promise<Array<ExternalProductDTO>> {
@@ -69,7 +69,7 @@ export class ProductsController {
       ...product,
       createdAt: dateToArray(product.createdAt),
       updatedAt: dateToArray(product.updatedAt),
-      tags: product.tags?.map((i) => i.name),
+      tags: product.tags?.map((i) => i.name) as Tags[],
     };
   }
 }

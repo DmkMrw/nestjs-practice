@@ -51,7 +51,7 @@ export class UsersDataService {
   }
 
   getUserById(id: string): Promise<User> {
-    return this.userRepository.findOne(id);
+    return this.userRepository.findOneBy({ id });
   }
 
   getAllUsers(): Promise<User[]> {
