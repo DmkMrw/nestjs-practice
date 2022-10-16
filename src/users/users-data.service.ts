@@ -6,28 +6,31 @@ import { User } from './db/users.entity';
 import { UserAddress } from './db/users-addresses.entity';
 import { CreateUserAddressDTO, CreateUserDTO } from './dto/create-user.dto';
 import { UpdateUserAddressDTO, UpdateUserDTO } from './dto/update-user.dto';
+import { Connection, EntityManager } from 'typeorm';
 
 @Injectable()
 export class UsersDataService {
   constructor(
     private userRepository: UserRepository,
     private userAddressRepository: UserAddressRepository,
+    private connection: Connection,
   ) {}
   private users: Array<User> = [];
 
-  async addUser(_user_: CreateUserDTO): Promise<User> {
-    const checkEmail = await this.userRepository.getUserByEmail(_user_.email);
-    if (checkEmail.length) {
-      throw new UserRequireUniqueEmailException();
-    }
-    const userToSave = new User();
-    userToSave.firstName = _user_.firstName;
-    userToSave.lastName = _user_.lastName;
-    userToSave.email = _user_.email;
-    userToSave.dateOfBirth = _user_.dateOfBirth;
-    userToSave.address = await this.prepareUserAddressesToSave(_user_.address);
-    userToSave.role = _user_.role;
-    return this.userRepository.save(userToSave);
+  async addUser(user: CreateUserDTO): Promise<User> {
+    return this.connection.transaction(async (manager: EntityManager) => {
+      const userToSave = new User();
+
+      userToSave.firstName = user.firstName;
+      userToSave.lastName = user.lastName;
+      userToSave.email = user.email;
+      userToSave.role = user.role;
+      userToSave.dateOfBirth = user.dateOfBirth;
+
+      userToSave.address = await this.prepareUserAddressesToSave(user.address);
+
+      return this.userRepository.save(userToSave);
+    });
   }
 
   async deleteUser(id: string): Promise<void> {
@@ -73,7 +76,6 @@ export class UsersDataService {
       addressToSave.city = add.city;
       addressToSave.street = add.street;
       addressToSave.house = add.house;
-      addressToSave.apartment = add.apartment;
 
       addresses.push(await this.userAddressRepository.save(addressToSave));
     }
