@@ -25,6 +25,7 @@
     "migration:revert": "typeorm-ts-node-esm migration:revert -d ./src/app.datasource.ts"
   },
   "dependencies": {
+    "@faker-js/faker": "^7.6.0",
     "@nestjs/common": "^9.0.0",
     "@nestjs/core": "^9.0.0",
     "@nestjs/platform-express": "^9.0.0",
