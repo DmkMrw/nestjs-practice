@@ -53,7 +53,7 @@ export class OrdersDataService {
   }
 
   async getOrderById(id: string): Promise<Order> {
-    return this.ordersRepository.findOne(id);
+    return this.ordersRepository.findOneBy({ id });
   }
 
   async getOrders(): Promise<Order[]> {
@@ -65,6 +65,62 @@ export class OrdersDataService {
   }
 
   async updateOrder(id: string, order: UpdateOrderDTO): Promise<Order> {
+    return this.connection.transaction(async (manager: EntityManager) => {
+      const orderToUpdate = await manager
+        .getCustomRepository(OrderRepository)
+        .findOneBy({ id });
+
+      orderToUpdate.price = order.price;
+      orderToUpdate.description = order.description;
+      orderToUpdate.state = order.state;
+      orderToUpdate.createdAt = order.createdAt;
+      orderToUpdate.updatedAt = order.updatedAt;
+
+      return await manager
+        .getCustomRepository(OrderRepository)
+        .save(orderToUpdate);
+    });
+  }
+  async addProductToOrder(id: string, order: UpdateOrderDTO): Promise<Order> {
+    return this.connection.transaction(async (manager: EntityManager) => {
+      const orderToUpdate = await manager
+        .getCustomRepository(OrderRepository)
+        .findOneBy({ id });
+
+      orderToUpdate.price = order.price;
+      orderToUpdate.description = order.description;
+      orderToUpdate.state = order.state;
+      orderToUpdate.createdAt = order.createdAt;
+      orderToUpdate.updatedAt = order.updatedAt;
+
+      return await manager
+        .getCustomRepository(OrderRepository)
+        .save(orderToUpdate);
+    });
+  }
+
+  async updateUserAddress(id: string, order: UpdateOrderDTO): Promise<Order> {
+    return this.connection.transaction(async (manager: EntityManager) => {
+      const orderToUpdate = await manager
+        .getCustomRepository(OrderRepository)
+        .findOneBy({ id });
+
+      orderToUpdate.price = order.price;
+      orderToUpdate.description = order.description;
+      orderToUpdate.state = order.state;
+      orderToUpdate.createdAt = order.createdAt;
+      orderToUpdate.updatedAt = order.updatedAt;
+
+      return await manager
+        .getCustomRepository(OrderRepository)
+        .save(orderToUpdate);
+    });
+  }
+
+  async deleteProductFromOrder(
+    id: string,
+    order: UpdateOrderDTO,
+  ): Promise<Order> {
     return this.connection.transaction(async (manager: EntityManager) => {
       const orderToUpdate = await manager
         .getCustomRepository(OrderRepository)
